@@ -14,6 +14,7 @@ use App\Distributors\DistributorResource;
 use App\DistributorSales\DistributorSaleResource;
 use App\Orders\OrderReport;
 use App\Orders\OrderResource;
+use App\Outlets\OutletResource;
 use App\BestSellerProducts\BestSellerProductReport;
 use App\BestSellerProducts\BestSellerProductResource;
 use App\Home\HomeBoard;
@@ -32,6 +33,7 @@ use App\pdf\PDFBoard;
             "Users"=>Section::create()->sub([
                 "Customers"=>CustomerResource::create()->icon("fas fa-users"),
                 "Distributors"=>DistributorResource::create()->icon("fa fa-truck"),
+                "Outlets"=>OutletResource::create()->icon("fa fa-shopping-cart"),
             ]),
 
             "Report"=>Section::create()->sub([
