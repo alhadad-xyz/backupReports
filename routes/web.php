@@ -19,5 +19,7 @@ Route::get('/customerImportFromExcel', [MyDashboardController::class, 'customerI
 Route::post('/postCustomerImportFromExcel', [MyDashboardController::class, 'postCustomerImportFromExcel'])->name('postCustomerImportFromExcel');
 Route::get('/distributorImportFromExcel', [MyDashboardController::class, 'distributorImportFromExcel'])->name('distributorImportFromExcel');
 Route::post('/postDistributorImportFromExcel', [MyDashboardController::class, 'postDistributorImportFromExcel'])->name('postDistributorImportFromExcel');
+Route::get('/outletImportFromExcel', [MyDashboardController::class, 'outletImportFromExcel'])->name('outletImportFromExcel');
+Route::post('/postOutletImportFromExcel', [MyDashboardController::class, 'postOutletImportFromExcel'])->name('postOutletImportFromExcel');
 Route::get('/orderImportFromExcel', [MyDashboardController::class, 'orderImportFromExcel'])->name('orderImportFromExcel');
 Route::post('/postOrderImportFromExcel', [MyDashboardController::class, 'postOrderImportFromExcel'])->name('postOrderImportFromExcel');

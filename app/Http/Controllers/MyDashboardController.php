@@ -10,6 +10,7 @@ use \koolreport\datagrid\DataTables;
 
 use App\Imports\CustomersImport;
 use App\Imports\DistributorsImport;
+use App\Imports\OutletsImport;
 use App\Imports\OrdersImport;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -50,6 +51,26 @@ class MyDashboardController extends Controller
     public function postDistributorImportFromExcel(Request $request) {
         try {
             Excel::import(new DistributorsImport, $request->file('import_file'));
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+
+            foreach ($failures as $failure) {
+                $failure->row(); // row that went wrong
+                $failure->attribute(); // either heading key (if using heading row concern) or column index
+                $failure->errors(); // Actual error messages from Laravel validator
+                $failure->values(); // The values of the row that has failed.
+            }
+        }
+        return redirect('/');
+    }
+
+    public function outletImportFromExcel() {
+        return view('import.outlets');
+    }
+
+    public function postOutletImportFromExcel(Request $request) {
+        try {
+            Excel::import(new OutletsImport, $request->file('import_file'));
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
 
