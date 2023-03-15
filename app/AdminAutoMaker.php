@@ -1,6 +1,6 @@
 <?php
 
-namespace demo;
+namespace App;
 
 use \koolreport\dashboard\sources\MySQL;
 
@@ -25,10 +25,10 @@ class AdminAutoMaker extends MySQL
          * provide connection
          */
         return [
-            "connectionString"=>"mysql:host=localhost;dbname=hessen",
-            "username"=>"root",
-            "password"=>"",
-            "charset"=>"utf8"
+            "connectionString"=>"mysql:host=". env('DB_HOST', '103.180.165.204') .";port=". env('DB_PORT', '103.180.165.204') .";dbname=". env('DB_DATABASE', 'hessen_db'),
+            "username"=> env('DB_USERNAME', 'root'),
+            "password"=> env('DB_PASSWORD', ''),
+            "charset"=> "utf8"
         ];
     }
 }

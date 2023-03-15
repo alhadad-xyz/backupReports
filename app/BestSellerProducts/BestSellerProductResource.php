@@ -59,10 +59,12 @@ class BestSellerProductResource extends Resource
         $query->join('users', 'transactions.user_id', 'users.id')
         ->join('transaction_detail', 'transactions.id', 'transaction_detail.transaction_id')
         ->join('products', 'transaction_detail.product_id', 'products.id')
-        ->select("transactions.id","invoice_date","invoice_no","discount","dpp","ppn","grand_total")
-        ->select("transaction_detail.qty", "transaction_detail.price")
+        ->where('type', 'customer')
+        ->select("transactions.id","invoice_date","invoice_no","SUM(discount) as discount","SUM(dpp) as dpp","SUM(ppn) as ppn","SUM(grand_total) as grand_total")
+        ->select("SUM(transaction_detail.qty) as qty", "SUM(transaction_detail.price) as price")
         ->select("users.name", "users.city")
-        ->select("productName", "products.category", "products.unit");
+        ->select("productName", "products.category", "products.unit")
+        ->groupBy("products.id");
         return $query;
     }
 
@@ -77,7 +79,10 @@ class BestSellerProductResource extends Resource
     protected function filters()
     {
         return [
-            TypeFilter::create()->title("Type"),
+            CustomerFilter::create()->title("Customer"),
+            ProductFilter::create()->title("Product"),
+            CategoryFilter::create()->title("Category"),
+            AreaFilter::create()->title("Area"),
         ];
     }
 
@@ -108,10 +113,6 @@ class BestSellerProductResource extends Resource
                 ->colName('invoice_date')
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("Nama BestSellerProduct")
-                ->colName('name')
-                ->searchable(true)
-                ->sortable(true),
             Text::create("Area Distributor")
                 ->colName('city')
                 ->searchable(true)
@@ -137,7 +138,7 @@ class BestSellerProductResource extends Resource
                 ->searchable(true)
                 ->sortable(true),
             Currency::create("Harga Satuan")->IDR()->symbol()
-                ->colName("transaction_detail.price")
+                ->colName("price")
                 ->searchable(true)
                 ->sortable(true),
             Currency::create("Discount")->IDR()->symbol()

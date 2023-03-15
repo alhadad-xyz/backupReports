@@ -4,17 +4,17 @@ namespace App\Orders;
 use \koolreport\dashboard\admin\filters\SelectFilter;
 use App\AutoMaker;
 
-class TypeFilter extends SelectFilter
+class DistributorFilter extends SelectFilter
 {
     protected function onCreated()
     {
-        $this->title("Type");
+        $this->title("Distributor");
     }
 
     protected function apply($query, $value)
     {
         //Return condition-applied query
-        return $query->where("type", $value);
+        return $query->where("name", $value);
     }
 
     protected function options()
@@ -23,7 +23,8 @@ class TypeFilter extends SelectFilter
         //to provide list of options for Select
         //In here we list all available country from customers table
         return AutoMaker::table("users")
-            ->select("type")
+            ->where('type', 'distributor')
+            ->select("name")
             ->distinct();
     }
 }
