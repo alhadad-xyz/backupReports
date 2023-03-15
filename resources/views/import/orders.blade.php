@@ -11,7 +11,7 @@
                         <label for="formFile" class="form-label">Import Orders</label>
                         <input class="form-control" type="file" name="import_file" id="import_file">
                     </div>
-                    <a href="uploads/files/import_customer_excel_template.xlsx" class="btn btn-success" download>Download Template</a>
+                    <a href="uploads/files/import_order_excel_template.xlsx" class="btn btn-success" download>Download Template</a>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
             </div>
@@ -28,48 +28,73 @@
                     <tbody>
                         <tr>
                           <td>1</td>
-                          <td>Nama</td>
-                          <td>Nama Order (Required)</td>
+                          <td>Email</td>
+                          <td>Email Customer/Distributors (Required)</td>
                         </tr>
                         <tr>
                           <td>2</td>
-                          <td>Email</td>
-                          <td>Email Order (Required)</td>
+                          <td>Invoice Date</td>
+                          <td>Tanggal Invoice (Required)</td>
                         </tr>
                         <tr>
                           <td>3</td>
-                          <td>Negara</td>
-                          <td>Negara Order (Optional)</td>
+                          <td>Invoice No</td>
+                          <td>Nomor Invoice (Required)</td>
                         </tr>
                         <tr>
                           <td>4</td>
-                          <td>Kota</td>
-                          <td>Kota Order (Optional)</td>
+                          <td>Discount</td>
+                          <td>Diskon Invoice (Optional)</td>
                         </tr>
                         <tr>
                           <td>5</td>
-                          <td>Alamat</td>
-                          <td>Alamat Order (Optional)</td>
+                          <td>DPP</td>
+                          <td>DPP Order(Optional)</td>
                         </tr>
                         <tr>
                           <td>6</td>
-                          <td>No Telp</td>
-                          <td>No Telp Order (Optional)</td>
+                          <td>PPN</td>
+                          <td>PPN Order(Optional)</td>
                         </tr>
                         <tr>
                           <td>7</td>
-                          <td>Nama Pengusaha Kena Pajak</td>
-                          <td>Nama Pengusaha Kena Pajak (Optional)</td>
+                          <td>Grand Total</td>
+                          <td>Grand Total Order(Optional)</td>
                         </tr>
                         <tr>
                           <td>8</td>
-                          <td>Alamat NPWP</td>
-                          <td>Alamat NPWP Order (Optional)</td>
+                          <td>Sale Return</td>
+                          <td>Sale Return Order (Optional)</td>
                         </tr>
                         <tr>
                           <td>9</td>
-                          <td>No NPWP</td>
-                          <td>No NPWP Order (Optional)</td>
+                          <td>Due Payment</td>
+                          <td>Due Payment Order (Optional)</td>
+                        </tr>
+                        <tr>
+                          <td>10</td>
+                          <td>Product Name</td>
+                          <td>Nama Produk (Required)</td>
+                        </tr>
+                        <tr>
+                          <td>11</td>
+                          <td>Qty</td>
+                          <td>Quantity Order (Required)</td>
+                        </tr>
+                        <tr>
+                          <td>12</td>
+                          <td>Price</td>
+                          <td>Harga Order (Required)</td>
+                        </tr>
+                        <tr>
+                          <td>13</td>
+                          <td>Category</td>
+                          <td>Kategori Produk (Required)</td>
+                        </tr>
+                        <tr>
+                          <td>14</td>
+                          <td>Unit</td>
+                          <td>Unit Produk (Required)</td>
                         </tr>
                     </tbody>
                   </table>

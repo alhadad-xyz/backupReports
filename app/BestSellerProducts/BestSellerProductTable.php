@@ -52,10 +52,6 @@ class BestSellerProductTable extends Table
                 ->label("Tanggal Invoice")
                 ->searchable(true)
                 ->sortable(true),
-            Text::create('name')
-                ->label("Nama Customer")
-                ->searchable(true)
-                ->sortable(true),
             Text::create("city")
                 ->label('Area Distributor')
                 ->searchable(true)

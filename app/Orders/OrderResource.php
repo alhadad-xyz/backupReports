@@ -68,7 +68,8 @@ class OrderResource extends Resource
     protected function filters()
     {
         return [
-            TypeFilter::create()->title("Type"),
+            CustomerFilter::create()->title("Customer"),
+            DistributorFilter::create()->title("Distributor"),
         ];
     }
 
@@ -92,12 +93,8 @@ class OrderResource extends Resource
                 ->colName('invoice_date')
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("Nama Order")
+            Text::create("Nama Customer")
                 ->colName('name')
-                ->searchable(true)
-                ->sortable(true),
-            Text::create("Area Distributor")
-                ->colName('city')
                 ->searchable(true)
                 ->sortable(true),
             Text::create("No Invoice")

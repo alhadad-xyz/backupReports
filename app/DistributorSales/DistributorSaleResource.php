@@ -98,10 +98,6 @@ class DistributorSaleResource extends Resource
                 ->colName('name')
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("Alamat")
-                ->colName("address")
-                ->searchable(true)
-                ->sortable(true),
             Text::create("Kota")
                 ->colName("city")
                 ->searchable(true)

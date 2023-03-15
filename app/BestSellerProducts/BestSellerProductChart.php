@@ -26,9 +26,12 @@ class BestSellerProductChart extends PieChart
 
         //Apply to query
         return AutoMaker::table("transactions")
+            ->join('users', 'transactions.user_id', 'users.id')
             ->join('transaction_detail', 'transactions.id', 'transaction_detail.transaction_id')
             ->join('products', 'transaction_detail.product_id', 'products.id')
-            ->select('productName', 'transaction_detail.qty');
+            ->where('type', 'customer')
+            ->select('productName', 'SUM(transaction_detail.qty) as qty')
+            ->groupBy('products.id');
     }
 
     protected function fields()

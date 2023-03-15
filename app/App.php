@@ -11,6 +11,7 @@ use \koolreport\dashboard\User;
 use \koolreport\dashboard\Client;
 use \koolreport\dashboard\ExportHandler;
 use \koolreport\dashboard\export\LocalExport;
+use \koolreport\dashboard\export\ChromeHeadlessio;
 use \koolreport\dashboard\export\CSVEngine;
 use \koolreport\dashboard\export\XLSXEngine;
 
@@ -152,11 +153,14 @@ class App extends Application
                     XLSXEngine::create()
                 )
                 ->pdfEngine(
-                    LocalExport::create()
-                    ->defaultConfig([
-                        "format"=>"A4",
-                        "orientation"=>"landscape"
-                    ])
+                    ChromeHeadlessio::create()->token("e6b3bbd783b447ec706a399d3c63761958ecd4cfac730cb10c0265a54b6296e0")
                 );
+                // ->pdfEngine(
+                //     LocalExport::create()
+                //     ->defaultConfig([
+                //         "format"=>"A4",
+                //         "orientation"=>"landscape"
+                //     ])
+                // );
     }
 }
