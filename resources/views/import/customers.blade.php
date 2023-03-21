@@ -71,6 +71,11 @@
                           <td>No NPWP</td>
                           <td>No NPWP Customer (Optional)</td>
                         </tr>
+                        <tr>
+                          <td>10</td>
+                          <td>Outlet</td>
+                          <td>Outlet Email / Contact No (Optional)</td>
+                        </tr>
                     </tbody>
                   </table>
             </div>
