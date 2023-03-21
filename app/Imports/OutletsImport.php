@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Models\DistributorHasOutlet;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -15,7 +16,7 @@ class OutletsImport implements ToCollection, WithHeadingRow
         foreach ($rows as $row)
         {
             if(isset($row['email'])) {
-                User::firstOrCreate([
+                $outlet = User::firstOrCreate([
                     'email' => $row['email'],
                 ],[
                     'name' => $row['name'],
@@ -29,6 +30,11 @@ class OutletsImport implements ToCollection, WithHeadingRow
                     'type' => 'outlet',
                     'password' => Hash::make('12341234'),
                 ]);
+
+                $distributor = User::where('email', $row['distributor'])->orWhere('contact_no', $row['distributor'])->first();
+                if($distributor) {
+                    DistributorHasOutlet::create(['distributor_id' => $distributor->id, 'outlet_id' => $outlet->id]);
+                }
             }
         }
     }
