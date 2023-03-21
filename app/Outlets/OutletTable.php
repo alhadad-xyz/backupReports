@@ -32,7 +32,11 @@ class OutletTable extends Table
 
     protected function dataSource()
     {
-        return AutoMaker::table("users")->where('type', 'outlet');
+        return AutoMaker::table("users")
+            ->leftJoin('distributor_has_outlets as dho', 'users.id', 'dho.outlet_id')
+            ->leftJoin('users as distributor', 'distributor.id', 'dho.distributor_id')
+            ->where('users.type', 'outlet')
+            ->select('users.*', 'distributor.name as distributor');
     }
 
     protected function fields()
@@ -40,6 +44,10 @@ class OutletTable extends Table
         return [
             Text::create("name")
                 ->label('Nama')
+                ->searchable(true)
+                ->sortable(true),
+            Text::create("distributor")
+                ->label('Distributor')
                 ->searchable(true)
                 ->sortable(true),
             Text::create("city")

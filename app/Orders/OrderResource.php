@@ -68,8 +68,9 @@ class OrderResource extends Resource
     protected function filters()
     {
         return [
-            CustomerFilter::create()->title("Customer"),
+            OutletFilter::create()->title("Outlet"),
             DistributorFilter::create()->title("Distributor"),
+            CustomerFilter::create()->title("Customer"),
         ];
     }
 

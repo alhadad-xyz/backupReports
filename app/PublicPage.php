@@ -31,9 +31,9 @@ use App\pdf\PDFBoard;
         return [
             "Home"=>HomeBoard::create()->icon("fa fa-home"),
             "Users"=>Section::create()->sub([
-                "Customers"=>CustomerResource::create()->icon("fas fa-users"),
                 "Distributors"=>DistributorResource::create()->icon("fa fa-truck"),
                 "Outlets"=>OutletResource::create()->icon("fa fa-shopping-cart"),
+                "Customers"=>CustomerResource::create()->icon("fas fa-users"),
             ]),
 
             "Report"=>Section::create()->sub([

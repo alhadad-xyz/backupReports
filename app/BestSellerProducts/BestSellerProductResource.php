@@ -160,7 +160,7 @@ class BestSellerProductResource extends Resource
                     ->csvExportable(true)
             ])
             ->width(1)
-            ->header("Chart List BestSellerProducts"),
+            ->header("Chart List Best Seller Products"),
 
             Button::create()->text("Export")->onClick(function(){
                 return Modal::show("largeModal");
