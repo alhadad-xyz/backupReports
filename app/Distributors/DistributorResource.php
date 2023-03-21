@@ -28,7 +28,7 @@ use \koolreport\dashboard\inputs\Select;
 use \koolreport\dashboard\menu\MenuItem;
 
 use App\AutoMaker;
-use App\Orders\OrderResource;
+use App\Outlets\OutletResource;
 
 class DistributorResource extends Resource
 {
@@ -59,34 +59,96 @@ class DistributorResource extends Resource
             //$id is the id value of record that shown by detail screen
             $thirty_days_ago = date('Y-m-d', strtotime("-31 days"));
             return  [
-                Row::create()->sub([
-                    Panel::create()->header("Sales Last 30 Days")->type("info")->sub([
-                        DistributorDetailLineChart::create()
+                Panel::create()->header("Sales Last 30 Days")->type("info")->sub([
+                    DistributorDetailLineChart::create()
                         ->dataSource(
-                            AutoMaker::table("users")
-                            ->join('transactions', 'transactions.user_id', 'users.id')
-                            ->where('users.id', $id)
-                            ->where('type', 'distributor')
+                            AutoMaker::table("distributor_has_outlets as dho")
+                            ->join('users as distributor', 'distributor.id', 'dho.distributor_id')
+                            ->join('users as outlet', 'outlet.id', 'dho.outlet_id')
+                            ->leftJoin('transactions', 'transactions.user_id', 'outlet.id')
+                            ->where('dho.distributor_id', $id)
                             ->where('invoice_date', '>=', $thirty_days_ago)
-                            ->select("invoice_date", "COUNT('users.id') AS `Total Sales`")
+                            ->select("invoice_date", "COUNT('transactions.id') AS `Total Sales`")
                             ->groupBy('invoice_date')
                         ),
-                    ])
-                ]),
+                ])->width(1),
 
-                Row::create()->sub([
-                    Panel::create()->header("Sales Current Financial Year")->type("info")->sub([
-                        DistributorDetailLineChart2::create()
-                        ->dataSource(
-                            AutoMaker::table("users")
-                            ->join('transactions', 'transactions.user_id', 'users.id')
-                            ->where('users.id', $id)
-                            ->where('type', 'distributor')
-                            ->select('MONTHNAME(invoice_date) as Month', 'COUNT(transactions.id) as `Total Sales`')
-                            ->groupBy('Month')
-                        ),
-                    ])
-                ]),
+                Panel::create()->header("Sales Current Financial Year")->type("info")->sub([
+                    DistributorDetailLineChart2::create()
+                    ->dataSource(
+                        AutoMaker::table("distributor_has_outlets as dho")
+                        ->join('users as distributor', 'distributor.id', 'dho.distributor_id')
+                        ->join('users as outlet', 'outlet.id', 'dho.outlet_id')
+                        ->leftJoin('transactions', 'transactions.user_id', 'outlet.id')
+                        ->where('dho.distributor_id', $id)
+                        ->select('MONTHNAME(invoice_date) as Month', 'COUNT(transactions.id) as `Total Sales`')
+                        ->groupBy('Month')
+                    ),
+                ])->width(1),
+
+                Panel::create()->header("Total Sales Per Outlet")->type("info")->sub([
+                    DistributorDetailTable::create()
+                    ->dataSource(
+                        AutoMaker::table("distributor_has_outlets as dho")
+                        ->join('users as distributor', 'distributor.id', 'dho.distributor_id')
+                        ->join('users as outlet', 'outlet.id', 'dho.outlet_id')
+                        ->leftJoin('transactions', 'transactions.user_id', 'outlet.id')
+                        ->join('transaction_detail', 'transactions.id', 'transaction_detail.transaction_id')
+                        ->join('products', 'transaction_detail.product_id', 'products.id')
+                        ->where('dho.distributor_id', $id)
+                        ->select('products.productName as `Nama`', 'outlet.address as `Alamat`', 'outlet.city as `Kota`', 'transactions.grand_total as `Total Sale`', 'transactions.sale_return as `Total Sale Return`', 'transactions.due_payment as `Due Payment`')
+                    ),
+                ])->width(2/3),
+
+                Panel::create()->header("Total Sales Per Outlet")->type("info")->sub([
+                    DistributorDetailPieChart::create()
+                    ->dataSource(
+                        AutoMaker::table("distributor_has_outlets as dho")
+                        ->join('users as distributor', 'distributor.id', 'dho.distributor_id')
+                        ->join('users as outlet', 'outlet.id', 'dho.outlet_id')
+                        ->leftJoin('transactions', 'transactions.user_id', 'outlet.id')
+                        ->join('transaction_detail', 'transactions.id', 'transaction_detail.transaction_id')
+                        ->join('products', 'transaction_detail.product_id', 'products.id')
+                        ->where('dho.distributor_id', $id)
+                        ->select('products.productName as `Nama`', 'transaction_detail.qty as `Qty`')
+                    ),
+                ])->width(1/3),
+
+                Panel::create()->header("Total Sales Per Distributor")->type("info")->sub([
+                    DistributorDetailTable2::create()
+                    ->dataSource(
+                        AutoMaker::table("users as distributor")
+                        ->leftJoin('transactions', 'transactions.user_id', 'distributor.id')
+                        ->join('transaction_detail', 'transactions.id', 'transaction_detail.transaction_id')
+                        ->join('products', 'transaction_detail.product_id', 'products.id')
+                        ->where('distributor.id', $id)
+                        ->select('products.productName as `Nama`', 'distributor.city as `Kota`', 'transactions.grand_total as `Total Sale`', 'transactions.sale_return as `Total Sale Return`', 'transactions.due_payment as `Due Payment`')
+                        // ->groupBy('outlet.id')
+                    ),
+                ])->width(2/3),
+
+                Panel::create()->header("Total Sales Per Distributor")->type("info")->sub([
+                    DistributorDetailPieChart2::create()
+                    ->dataSource(
+                        AutoMaker::table("users as distributor")
+                        ->leftJoin('transactions', 'transactions.user_id', 'distributor.id')
+                        ->join('transaction_detail', 'transactions.id', 'transaction_detail.transaction_id')
+                        ->join('products', 'transaction_detail.product_id', 'products.id')
+                        ->where('distributor.id', $id)
+                        ->select('products.productName as `Nama`', 'transaction_detail.qty as `Qty`')
+                    ),
+                ])->width(1/3),
+
+                Panel::create()->header("List Outlet")->type("info")->sub([
+                    DistributorDetailOutletTable::create()
+                    ->dataSource(
+                        AutoMaker::table("distributor_has_outlets as dho")
+                        ->join('users as distributor', 'distributor.id', 'dho.distributor_id')
+                        ->join('users as outlet', 'outlet.id', 'dho.outlet_id')
+                        ->where('dho.distributor_id', $id)
+                        ->select('outlet.id as `No`', 'outlet.name as `Nama`', 'outlet.city as `Kota`', 'outlet.address as `Alamat`', 'outlet.contact_no as `No Telp`', 'outlet.email as `Email`', 'outlet.taxable_company as `Nama Pengusaha Kena Pajak`', 'outlet.npwp_address as `Alamat NPWP`', 'outlet.npwp_no as `No NPWP`')
+                    ),
+                ])->width(1),
             ];
         });
     }
@@ -94,7 +156,7 @@ class DistributorResource extends Resource
     protected function relations()
     {
         return [
-            HasMany::resource(OrderResource::class)->link(["user_id"=>"id"])->title("Orders")
+            // HasMany::resource(OutletResource::class)->link(["outlet_id"=>"id"])->title("Orders")
         ];
     }
 
