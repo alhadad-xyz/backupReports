@@ -31,7 +31,7 @@ class OutletsImport implements ToCollection, WithHeadingRow
                     'password' => Hash::make('12341234'),
                 ]);
 
-                $distributor = User::where('email', $row['distributor'])->orWhere('contact_no', $row['distributor'])->first();
+                $distributor = User::where('email', $row['distributor'])->first();
                 if($distributor) {
                     DistributorHasOutlet::create(['distributor_id' => $distributor->id, 'outlet_id' => $outlet->id]);
                 }

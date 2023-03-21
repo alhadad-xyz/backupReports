@@ -31,7 +31,7 @@ class CustomersImport implements ToCollection, WithHeadingRow
                     'password' => Hash::make('12341234'),
                 ]);
 
-                $outlet = User::where('email', $row['outlet'])->orWhere('contact_no', $row['outlet'])->first();
+                $outlet = User::where('email', $row['outlet'])->first();
                 if($outlet) {
                     OutletHasCustomer::create(['outlet_id' => $outlet->id, 'customer_id' => $customer->id]);
                 }
