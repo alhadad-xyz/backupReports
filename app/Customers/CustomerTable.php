@@ -32,7 +32,11 @@ class CustomerTable extends Table
 
     protected function dataSource()
     {
-        return AutoMaker::table("users")->where('type', 'customer');
+        return AutoMaker::table("users")
+            ->leftJoin('outlet_has_customers as ohs', 'users.id', 'ohs.customer_id')
+            ->leftJoin('users as outlet', 'outlet.id', 'ohs.outlet_id')
+            ->where('users.type', 'customer')
+            ->select('users.*', 'outlet.name as outlet');
     }
 
     protected function fields()
@@ -40,6 +44,10 @@ class CustomerTable extends Table
         return [
             Text::create("name")
                 ->label('Nama')
+                ->searchable(true)
+                ->sortable(true),
+            Text::create("outlet")
+                ->label('Outlet')
                 ->searchable(true)
                 ->sortable(true),
             Text::create("city")

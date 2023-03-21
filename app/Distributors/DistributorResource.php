@@ -11,6 +11,8 @@ use \koolreport\dashboard\admin\actions\DetailAction;
 use \koolreport\dashboard\admin\actions\InlineEditAction;
 use \koolreport\dashboard\admin\actions\UpdateAction;
 
+use \koolreport\dashboard\admin\relations\HasMany;
+
 use \koolreport\dashboard\fields\ID;
 use \koolreport\dashboard\fields\Text;
 
@@ -26,10 +28,7 @@ use \koolreport\dashboard\inputs\Select;
 use \koolreport\dashboard\menu\MenuItem;
 
 use App\AutoMaker;
-use App\Distributors\CityFilter;
-use App\Distributors\CountryFilter;
-use App\Distributors\Distributor;
-use App\Distributors\DistributorChart;
+use App\Orders\OrderResource;
 
 class DistributorResource extends Resource
 {
@@ -50,6 +49,53 @@ class DistributorResource extends Resource
 
         $this->listScreen()->adminTable()
             ->tableStriped(true);
+
+        $this->detailScreen()->title(function(){
+            $data = $this->data();
+            return $data["name"];
+        });
+
+        $this->detailScreen()->highlights(function($id){
+            //$id is the id value of record that shown by detail screen
+            $thirty_days_ago = date('Y-m-d', strtotime("-31 days"));
+            return  [
+                Row::create()->sub([
+                    Panel::create()->header("Sales Last 30 Days")->type("info")->sub([
+                        DistributorDetailLineChart::create()
+                        ->dataSource(
+                            AutoMaker::table("users")
+                            ->join('transactions', 'transactions.user_id', 'users.id')
+                            ->where('users.id', $id)
+                            ->where('type', 'distributor')
+                            ->where('invoice_date', '>=', $thirty_days_ago)
+                            ->select("invoice_date", "COUNT('users.id') AS `Total Sales`")
+                            ->groupBy('invoice_date')
+                        ),
+                    ])
+                ]),
+
+                Row::create()->sub([
+                    Panel::create()->header("Sales Current Financial Year")->type("info")->sub([
+                        DistributorDetailLineChart2::create()
+                        ->dataSource(
+                            AutoMaker::table("users")
+                            ->join('transactions', 'transactions.user_id', 'users.id')
+                            ->where('users.id', $id)
+                            ->where('type', 'distributor')
+                            ->select('MONTHNAME(invoice_date) as Month', 'COUNT(transactions.id) as `Total Sales`')
+                            ->groupBy('Month')
+                        ),
+                    ])
+                ]),
+            ];
+        });
+    }
+
+    protected function relations()
+    {
+        return [
+            HasMany::resource(OrderResource::class)->link(["user_id"=>"id"])->title("Orders")
+        ];
     }
 
     protected function query($query) {
@@ -75,7 +121,7 @@ class DistributorResource extends Resource
     protected function actions()
     {
         return [
-            DetailAction::create()->showOnTable(false),
+            DetailAction::create()->showOnTable(true),
             UpdateAction::create()->showOnTable(false),
             InlineEditAction::create()->showOnTable(false),
             DeleteAction::create()->showOnTable(false),
