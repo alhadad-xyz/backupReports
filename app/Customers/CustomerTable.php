@@ -32,11 +32,10 @@ class CustomerTable extends Table
 
     protected function dataSource()
     {
-        return AutoMaker::table("users")
-            ->leftJoin('outlet_has_customers as ohs', 'users.id', 'ohs.customer_id')
-            ->leftJoin('users as outlet', 'outlet.id', 'ohs.outlet_id')
-            ->where('users.type', 'customer')
-            ->select('users.*', 'outlet.name as outlet');
+        return AutoMaker::table("customers")
+            ->leftJoin('outlets', 'outlets.outlet_id', 'outlets.outlet_id')
+            ->select('customers.customer_id', 'customers.outlet_id', 'customers.customer_name', 'customers.customer_city', 'customers.customer_address', 'customers.customer_contact_no', 'customers.customer_email', 'customers.customer_taxable_company', 'customers.customer_npwp_address', 'customers.customer_npwp_no')
+            ->select('outlet_name');
     }
 
     protected function fields()

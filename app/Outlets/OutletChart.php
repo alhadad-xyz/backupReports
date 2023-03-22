@@ -22,16 +22,15 @@ class OutletChart extends ColumnChart
         // $range = $this->sibling("PaymentDateRange")->value();
 
         //Apply to query
-        return AutoMaker::table("users")
-            ->where("type", 'outlet')
-            ->select('city', 'COUNT(city) as total_city')
-            ->groupBy('city');
+        return AutoMaker::table("outlets")
+            ->select('outlet_city', 'COUNT(outlet_city) as total_city')
+            ->groupBy('outlet_city');
     }
 
     protected function fields()
     {
         return [
-            Text::create("Kota")->colName('city'),
+            Text::create("Kota")->colName('outlet_city'),
             Number::create("Total Outlet")->colName('total_city'),
         ];
     }

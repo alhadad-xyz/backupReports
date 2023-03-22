@@ -32,26 +32,25 @@ class DistributorSaleTable extends Table
 
     protected function dataSource()
     {
-        return AutoMaker::table("users")
-            ->join('transactions', 'transactions.user_id', 'users.id')
-            ->where('type', 'distributor')
-            ->select("transactions.id", "SUM(transactions.grand_total) as grand_total", "SUM(transactions.sale_return) as sale_return", "SUM(transactions.due_payment) as due_payment")
-            ->select("users.name", 'city', 'address')
-            ->groupBy('users.id');
+        return AutoMaker::table("distributors")
+        ->leftJoin('transactions', 'transactions.distributor_id', 'distributors.distributor_id')
+        ->select("transactions.id", "SUM(transactions.grand_total) as grand_total", "SUM(transactions.sale_return) as sale_return", "SUM(transactions.due_payment) as due_payment")
+        ->select("distributor_name", 'distributor_city', 'distributor_address')
+        ->groupBy('transactions.distributor_id');
     }
 
     protected function fields()
     {
         return [
-            Text::create('name')
+            Text::create('distributor_name')
                 ->label("Nama")
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("address")
+            Text::create("distributor_address")
                 ->label("Alamat")
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("city")
+            Text::create("distributor_city")
                 ->label("Kota")
                 ->searchable(true)
                 ->sortable(true),

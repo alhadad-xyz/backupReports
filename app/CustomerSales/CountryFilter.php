@@ -22,10 +22,9 @@ class CountryFilter extends SelectFilter
         //Since this is SelectFilter so you have options() method
         //to provide list of options for Select
         //In here we list all available country from customers table
-        return AutoMaker::table("users")
-            ->join('transactions', 'transactions.user_id', 'users.id')
-            ->where('type', 'customer')
-            ->select("country")
-            ->distinct();
+        return AutoMaker::table("customers")
+        ->join('transactions', 'transactions.customer_id', 'customers.customer_id')
+        ->select("customer_country")
+        ->distinct();
     }
 }

@@ -22,17 +22,16 @@ class DistributorChart extends ColumnChart
         // $range = $this->sibling("PaymentDateRange")->value();
 
         //Apply to query
-        return AutoMaker::table("users")
-            ->where("type", 'distributor')
-            ->select('city', 'COUNT(city) as total_city')
-            ->groupBy('city')
+        return AutoMaker::table("distributors")
+            ->select('distributor_city', 'COUNT(distributor_city) as total_city')
+            ->groupBy('distributor_city')
             ->limit(10);
     }
 
     protected function fields()
     {
         return [
-            Text::create("Kota")->colName('city'),
+            Text::create("Kota")->colName('distributor_city'),
             Number::create("Total Distributor")->colName('total_city'),
         ];
     }

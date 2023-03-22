@@ -22,16 +22,15 @@ class CustomerChart extends ColumnChart
         // $range = $this->sibling("PaymentDateRange")->value();
 
         //Apply to query
-        return AutoMaker::table("users")
-            ->where("type", 'customer')
-            ->select('city', 'COUNT(city) as total_city')
-            ->groupBy('city');
+        return AutoMaker::table("customers")
+        ->select('customer_city', 'COUNT(customer_city) as total_city')
+        ->groupBy('customer_city');
     }
 
     protected function fields()
     {
         return [
-            Text::create("Kota")->colName('city'),
+            Text::create("Kota")->colName('customer_city'),
             Number::create("Total Customer")->colName('total_city'),
         ];
     }

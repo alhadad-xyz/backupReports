@@ -23,18 +23,17 @@ class CustomerSaleLine extends LineChart
         // $range = $this->sibling("PaymentDateRange")->value();
         $thirty_days_ago = date('Y-m-d', strtotime("-31 days"));
         //Apply to query
-        return AutoMaker::table("users")
-            ->join('transactions', 'transactions.user_id', 'users.id')
-            ->where('type', 'customer')
+        return AutoMaker::table("customers")
+            ->leftJoin('transactions', 'transactions.customer_id', 'customers.customer_id')
             ->where('invoice_date', '>=', $thirty_days_ago)
-            ->select("invoice_date", "COUNT('users.id') AS total_sales")
+            ->select("invoice_date", "COUNT('transactions.id') AS total_sales")
             ->groupBy('invoice_date');
     }
 
     protected function fields()
     {
         return [
-            Text::create("Tanggal")->colName('invoice_date'),
+            Text::create("invoice_date")->colName('invoice_date'),
             Number::create("Total Customer Sales")->colName('total_sales'),
         ];
     }

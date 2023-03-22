@@ -36,7 +36,7 @@ class DistributorSaleResource extends Resource
 {
     protected function onCreated()
     {
-        $this->manageTable("users")->inSource(AutoMaker::class);
+        $this->manageTable("distributors")->inSource(AutoMaker::class);
 
         //Allow searchBox
         $this->listScreen()->searchBox()
@@ -55,11 +55,10 @@ class DistributorSaleResource extends Resource
 
     protected function query($query) {
         $query
-        ->join('transactions', 'transactions.user_id', 'users.id')
-        ->where('type', 'distributor')
+        ->leftJoin('transactions', 'transactions.distributor_id', 'distributors.distributor_id')
         ->select("transactions.id", "SUM(transactions.grand_total) as grand_total", "SUM(transactions.sale_return) as sale_return", "SUM(transactions.due_payment) as due_payment")
-        ->select("users.name", 'city', 'address')
-        ->groupBy('users.id');
+        ->select('distributors.distributor_id', "distributor_name", 'distributor_city', 'distributor_address')
+        ->groupBy('transactions.distributor_id');
         return $query;
     }
 
@@ -93,13 +92,13 @@ class DistributorSaleResource extends Resource
     {
         return [
             ID::create("#")
-                ->colName('id'),
+                ->colName('distributor_id'),
             Text::create("Nama")
-                ->colName('name')
+                ->colName('distributor_name')
                 ->searchable(true)
                 ->sortable(true),
             Text::create("Kota")
-                ->colName("city")
+                ->colName("distributor_city")
                 ->searchable(true)
                 ->sortable(true),
             Currency::create("Total Sale")->IDR()->symbol()
@@ -128,13 +127,13 @@ class DistributorSaleResource extends Resource
             ->width(1/2)
             ->header("Chart Total Sales By Distributors"),
 
-            Panel::success([
-                DistributorSaleLine::create()
-                    ->xlsxExportable(true)
-                    ->csvExportable(true)
-            ])
-            ->width(1/2)
-            ->header("Distributors Sales Last 30 Days"),
+            // Panel::success([
+            //     DistributorSaleLine::create()
+            //         ->xlsxExportable(true)
+            //         ->csvExportable(true)
+            // ])
+            // ->width(1/2)
+            // ->header("Distributors Sales Last 30 Days"),
 
             Button::create()->text("Export")->onClick(function(){
                 return Modal::show("largeModal");

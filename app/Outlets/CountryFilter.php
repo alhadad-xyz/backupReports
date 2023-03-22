@@ -14,17 +14,17 @@ class CountryFilter extends SelectFilter
     protected function apply($query, $value)
     {
         //Return condition-applied query
-        return $query->where("country", $value);
+        return $query->where("outlet_country", $value);
     }
 
     protected function options()
     {
         //Since this is SelectFilter so you have options() method
         //to provide list of options for Select
-        //In here we list all available country from outlets table
-        return AutoMaker::table("users")
-            ->where('type', 'outlet')
-            ->select("country")
-            ->distinct();
+        //In here we list all available outlet_country from outlets table
+        return AutoMaker::table("outlets")
+        ->select("outlet_country")
+        ->orderBy('outlet_country', 'ASC')
+        ->distinct();
     }
 }

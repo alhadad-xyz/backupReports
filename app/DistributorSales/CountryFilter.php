@@ -14,18 +14,17 @@ class CountryFilter extends SelectFilter
     protected function apply($query, $value)
     {
         //Return condition-applied query
-        return $query->where("country", $value);
+        return $query->where("distributor_country", $value);
     }
 
     protected function options()
     {
         //Since this is SelectFilter so you have options() method
         //to provide list of options for Select
-        //In here we list all available country from customers table
-        return AutoMaker::table("users")
-            ->join('transactions', 'transactions.user_id', 'users.id')
-            ->where('type', 'distributor')
-            ->select("country")
+        //In here we list all available distributor_country from customers table
+        return AutoMaker::table("distributors")
+            ->join('transactions', 'transactions.distributor_id', 'distributors.distributor_id')
+            ->select("distributor_country")
             ->distinct();
     }
 }

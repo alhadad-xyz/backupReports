@@ -70,6 +70,14 @@ class App extends Application
                             ->roles(["admin"]);
                     }
 
+                    if($username == 'hello@eyesimple.us' && $password == '12341234') {
+                        return User::create()
+                            ->id(1)
+                            ->name("Admin")
+                            ->avatar("images/8.jpg")
+                            ->roles(["admin"]);
+                    }
+
                     //Other: fail to login, return null
                     return null;
                 });
