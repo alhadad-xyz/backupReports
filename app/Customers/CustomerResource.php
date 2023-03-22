@@ -14,6 +14,7 @@ use \koolreport\dashboard\admin\actions\UpdateAction;
 use \koolreport\dashboard\admin\relations\HasMany;
 
 use \koolreport\dashboard\fields\ID;
+use \koolreport\dashboard\fields\RelationLink;
 use \koolreport\dashboard\fields\Text;
 
 use \koolreport\dashboard\containers\Modal;
@@ -30,12 +31,13 @@ use \koolreport\dashboard\menu\MenuItem;
 
 use App\AutoMaker;
 use App\Orders\OrderResource;
+use App\Outlets\OutletResource;
 
 class CustomerResource extends Resource
 {
     protected function onCreated()
     {
-        $this->manageTable("users")->inSource(AutoMaker::class);
+        $this->manageTable("customers")->inSource(AutoMaker::class);
 
         //Allow searchBox
         $this->listScreen()->searchBox()
@@ -53,10 +55,10 @@ class CustomerResource extends Resource
 
         $this->detailScreen()->title(function(){
             $data = $this->data();
-            return $data["name"];
+            return $data["customer_name"];
         });
 
-        $this->detailScreen()->highlights(function($id){
+        $this->detailScreen()->bottom(function($id){
             //$id is the id value of record that shown by detail screen
             $thirty_days_ago = date('Y-m-d', strtotime("-31 days"));
             return  [
@@ -64,12 +66,11 @@ class CustomerResource extends Resource
                     Panel::create()->header("Sales Last 30 Days")->type("info")->sub([
                         CustomerDetailLineChart::create()
                         ->dataSource(
-                            AutoMaker::table("users")
-                            ->join('transactions', 'transactions.user_id', 'users.id')
-                            ->where('users.id', $id)
-                            ->where('type', 'customer')
+                            AutoMaker::table("customers")
+                            ->leftJoin('transactions', 'transactions.customer_id', 'customers.customer_id')
+                            ->where('transactions.customer_id', $id)
                             ->where('invoice_date', '>=', $thirty_days_ago)
-                            ->select("invoice_date", "COUNT('users.id') AS `Total Sales`")
+                            ->select("invoice_date", "COUNT('transactions.id') AS `Total Sales`")
                             ->groupBy('invoice_date')
                         ),
                     ])
@@ -79,10 +80,9 @@ class CustomerResource extends Resource
                     Panel::create()->header("Sales Current Financial Year")->type("info")->sub([
                         CustomerDetailLineChart2::create()
                         ->dataSource(
-                            AutoMaker::table("users")
-                            ->join('transactions', 'transactions.user_id', 'users.id')
-                            ->where('users.id', $id)
-                            ->where('type', 'customer')
+                            AutoMaker::table("customers")
+                            ->leftJoin('transactions', 'transactions.customer_id', 'customers.customer_id')
+                            ->where('transactions.customer_id', $id)
                             ->select('MONTHNAME(invoice_date) as Month', 'COUNT(transactions.id) as `Total Sales`')
                             ->groupBy('Month')
                         ),
@@ -92,43 +92,29 @@ class CustomerResource extends Resource
         });
     }
 
-    protected function relations()
-    {
-        return [
-            HasMany::resource(OrderResource::class)->link(["user_id"=>"id"])->title("Orders")
-        ];
-    }
-
     protected function query($query) {
-        $query->leftJoin('outlet_has_customers as ohs', 'users.id', 'ohs.customer_id')
-            ->leftJoin('users as outlet', 'outlet.id', 'ohs.outlet_id')
-            ->where('users.type', 'customer')
-            ->select('users.*', 'outlet.name as outlet');
+        $query->leftJoin('outlets', 'outlets.outlet_id', 'customers.outlet_id')
+        ->select('customers.customer_id', 'customers.outlet_id', 'customers.customer_name', 'customers.customer_city', 'customers.customer_address', 'customers.customer_contact_no', 'customers.customer_email', 'customers.customer_taxable_company', 'customers.customer_npwp_address', 'customers.customer_npwp_no')
+        ->select('outlet_name');
         return $query;
     }
 
     protected function filters()
     {
         return [
+            OutletFilter::create()->title("Outlet"),
             CityFilter::create()->title("Kota"),
             CountryFilter::create()->title("Negara"),
         ];
     }
 
-    // protected function glasses()
-    // {
-    //     return [
-    //         Customer::create()
-    //     ];
-    // }
-
     protected function actions()
     {
         return [
             DetailAction::create()->showOnTable(true),
-            UpdateAction::create()->showOnTable(false),
+            UpdateAction::create()->showOnTable(true),
             InlineEditAction::create()->showOnTable(false),
-            DeleteAction::create()->showOnTable(false),
+            DeleteAction::create()->showOnTable(true),
         ];
     }
 
@@ -137,47 +123,51 @@ class CustomerResource extends Resource
     {
         return [
             ID::create("#")
-                ->colName('id'),
+                ->colName('customer_id'),
             Text::create("Nama")
-                ->colName('name')
-                // ->searchable(true)
+                ->colName('customer_name')
+                ->searchable(true)
                 ->sortable(true),
-            Text::create("Outlet")
-                ->colName('outlet')
-                // ->searchable(true)
-                ->sortable(true),
-            Text::create("Kota")
-                ->colName("city")
-                // ->searchable(true)
-                ->sortable(true)
+            RelationLink::create("outlet_id")
+                ->label("Distributor")
+                ->formatUsing(function($value,$row){
+                    return $row["outlet_name"];
+                })
+                ->linkTo(OutletResource::class)
                 ->inputWidget(
-                Select::create()
-                ->dataSource(function(){
-                    return AutoMaker::table("users")->select("city")->distinct()->orderBy("city");
-                })
-                ->fields(function(){
-                    return [
-                        Text::create("city")
-                    ];
-                })
-            ),
-            Text::create("Alamat")->colName("address")
-                // ->searchable(true)
+                    Select::create()
+                    ->dataSource(function(){
+                        return AutoMaker::table("outlets")
+                                ->select("outlet_id","outlet_name");
+                    })
+                    ->fields(function(){
+                        return [
+                            ID::create("outlet_id"),
+                            Text::create("outlet_name"),
+                        ];
+                    })
+                ),
+            Text::create("Kota")
+                ->colName("customer_city")
+                ->searchable(true)
                 ->sortable(true),
-            Text::create("No Telp")->colName("contact_no")
-                // ->searchable(true)
+            Text::create("Alamat")->colName("customer_address")
+                ->searchable(true)
                 ->sortable(true),
-            Text::create("Email")->colName("email")
-                // ->searchable(true)
+            Text::create("No Telp")->colName("customer_contact_no")
+                ->searchable(true)
                 ->sortable(true),
-            Text::create("Nama Pengusaha Kena Pajak")->colName("taxable_company")
-                // ->searchable(true)
+            Text::create("Email")->colName("customer_email")
+                ->searchable(true)
                 ->sortable(true),
-            Text::create("Alamat NPWP")->colName("npwp_address")
-                // ->searchable(true)
+            Text::create("Nama Pengusaha Kena Pajak")->colName("customer_taxable_company")
+                ->searchable(true)
                 ->sortable(true),
-            Text::create("No NPWP")->colName("npwp_no")
-                // ->searchable(true)
+            Text::create("Alamat NPWP")->colName("customer_npwp_address")
+                ->searchable(true)
+                ->sortable(true),
+            Text::create("No NPWP")->colName("customer_npwp_no")
+                ->searchable(true)
                 ->sortable(true),
         ];
     }

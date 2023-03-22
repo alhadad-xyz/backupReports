@@ -29,7 +29,7 @@ use App\pdf\PDFBoard;
     protected function sidebar()
     {
         return [
-            "Home"=>HomeBoard::create()->icon("fa fa-home"),
+            // "Home"=>HomeBoard::create()->icon("fa fa-home"),
             "Users"=>Section::create()->sub([
                 "Distributors"=>DistributorResource::create()->icon("fa fa-truck"),
                 "Outlets"=>OutletResource::create()->icon("fa fa-shopping-cart"),

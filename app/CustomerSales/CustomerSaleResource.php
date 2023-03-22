@@ -37,7 +37,7 @@ class CustomerSaleResource extends Resource
 {
     protected function onCreated()
     {
-        $this->manageTable("users")->inSource(AutoMaker::class);
+        $this->manageTable("customers")->inSource(AutoMaker::class);
 
         //Allow searchBox
         $this->listScreen()->searchBox()
@@ -56,11 +56,10 @@ class CustomerSaleResource extends Resource
 
     protected function query($query) {
         $query
-        ->join('transactions', 'transactions.user_id', 'users.id')
-        ->where('type', 'customer')
+        ->leftJoin('transactions', 'transactions.customer_id', 'customers.customer_id')
         ->select("transactions.id", "SUM(transactions.grand_total) as grand_total", "SUM(transactions.sale_return) as sale_return", "SUM(transactions.due_payment) as due_payment")
-        ->select("users.name", 'city', 'address')
-        ->groupBy('users.id');
+        ->select("customer_name", 'customer_city', 'customer_address')
+        ->groupBy('transactions.customer_id');
         return $query;
     }
 
@@ -96,14 +95,14 @@ class CustomerSaleResource extends Resource
             ID::create("#")
                 ->colName('id'),
             Text::create("Nama")
-                ->colName('name')
+                ->colName('customer_name')
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("Alamat")->colName("address")
+            Text::create("Alamat")->colName("customer_address")
                 ->searchable(true)
                 ->sortable(true),
             Text::create("Kota")
-                ->colName("city")
+                ->colName("customer_city")
                 ->searchable(true)
                 ->sortable(true),
             Currency::create("Total Sale")->IDR()->symbol()
@@ -132,13 +131,13 @@ class CustomerSaleResource extends Resource
             ->width(1/2)
             ->header("Chart Total Sales By Customers"),
 
-            Panel::success([
-                CustomerSaleLine::create()
-                    ->xlsxExportable(true)
-                    ->csvExportable(true)
-            ])
-            ->width(1/2)
-            ->header("Customers Sales Last 30 Days"),
+            // Panel::success([
+            //     CustomerSaleLine::create()
+            //         ->xlsxExportable(true)
+            //         ->csvExportable(true)
+            // ])
+            // ->width(1/2)
+            // ->header("Customers Sales Last 30 Days"),
 
             Button::create()->text("Export")->onClick(function(){
                 return Modal::show("largeModal");

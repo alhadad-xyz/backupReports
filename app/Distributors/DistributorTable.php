@@ -31,7 +31,7 @@ class DistributorTable extends Table
 
     protected function dataSource()
     {
-        return AutoMaker::table("users")->where('type', 'distributor');
+        return AutoMaker::table("distributors");
     }
 
     protected function fields()

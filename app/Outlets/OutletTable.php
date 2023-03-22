@@ -32,43 +32,42 @@ class OutletTable extends Table
 
     protected function dataSource()
     {
-        return AutoMaker::table("users")
-            ->leftJoin('distributor_has_outlets as dho', 'users.id', 'dho.outlet_id')
-            ->leftJoin('users as distributor', 'distributor.id', 'dho.distributor_id')
-            ->where('users.type', 'outlet')
-            ->select('users.*', 'distributor.name as distributor');
+        return AutoMaker::table("outlets")
+            ->leftJoin('distributors', 'distributors.distributor_id', 'outlets.distributor_id')
+            ->select('outlets.outlet_id', 'outlets.distributor_id', 'outlets.outlet_name', 'outlets.outlet_city', 'outlets.outlet_address', 'outlets.outlet_contact_no', 'outlets.outlet_email', 'outlets.outlet_taxable_company', 'outlets.outlet_npwp_address', 'outlets.outlet_npwp_no')
+            ->select('distributor_name');
     }
 
     protected function fields()
     {
         return [
-            Text::create("name")
+            Text::create("outlet_name")
                 ->label('Nama')
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("distributor")
+            Text::create("distributor_name")
                 ->label('Distributor')
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("city")
+            Text::create("outlet_city")
                 ->label("Kota")
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("address")
+            Text::create("outlet_address")
                 ->label("Alamat"),
-            Text::create("contact_no")
+            Text::create("outlet_contact_no")
                 ->label("No Telp"),
-            Text::create("email")
+            Text::create("outlet_email")
                 ->label("Email")
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("taxable_company")
+            Text::create("outlet_taxable_company")
                 ->label("Nama Pengusaha Kena Pajak"),
-            Text::create("npwp_address")
+            Text::create("outlet_npwp_address")
                 ->label("Alamat NPWP")
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("npwp_no")
+            Text::create("outlet_npwp_no")
                 ->label("No NPWP")
                 ->searchable(true)
                 ->sortable(true),

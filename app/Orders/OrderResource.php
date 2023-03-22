@@ -55,12 +55,15 @@ class OrderResource extends Resource
     }
 
     protected function query($query) {
-        $query->join('users', 'transactions.user_id', 'users.id')
+        $query
+        ->leftJoin('distributors', 'transactions.distributor_id', 'distributors.distributor_id')
+        ->leftJoin('outlets', 'transactions.outlet_id', 'outlets.outlet_id')
+        ->leftJoin('customers', 'transactions.customer_id', 'customers.customer_id')
         ->join('transaction_detail', 'transactions.id', 'transaction_detail.transaction_id')
         ->join('products', 'transaction_detail.product_id', 'products.id')
         ->select("transactions.id","invoice_date","invoice_no","discount","dpp","ppn","grand_total")
         ->select("transaction_detail.qty", "transaction_detail.price")
-        ->select("users.name", "users.city")
+        ->select("COALESCE(distributors.distributor_name, outlets.outlet_name, customers.customer_name) AS name", "COALESCE(distributors.distributor_city, outlets.outlet_city, customers.customer_city)")
         ->select("productName", "products.category", "products.unit");
         return $query;
     }
@@ -94,7 +97,7 @@ class OrderResource extends Resource
                 ->colName('invoice_date')
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("Nama Customer")
+            Text::create("Nama Distributor")
                 ->colName('name')
                 ->searchable(true)
                 ->sortable(true),

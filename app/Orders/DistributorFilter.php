@@ -14,7 +14,7 @@ class DistributorFilter extends SelectFilter
     protected function apply($query, $value)
     {
         //Return condition-applied query
-        return $query->where("name", $value);
+        return $query->where("distributor_name", $value);
     }
 
     protected function options()
@@ -22,9 +22,8 @@ class DistributorFilter extends SelectFilter
         //Since this is SelectFilter so you have options() method
         //to provide list of options for Select
         //In here we list all available country from customers table
-        return AutoMaker::table("users")
-            ->where('type', 'distributor')
-            ->select("name")
+        return AutoMaker::table("distributors")
+            ->select("distributor_name")
             ->distinct();
     }
 }

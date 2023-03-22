@@ -23,13 +23,11 @@ class DistributorSaleChart extends PieChart
         // $range = $this->sibling("PaymentDateRange")->value();
 
         //Apply to query
-        return AutoMaker::table("users")
-        ->join('transactions', 'transactions.user_id', 'users.id')
+        return AutoMaker::table("distributors")
+        ->leftJoin('transactions', 'transactions.distributor_id', 'distributors.distributor_id')
         ->join('transaction_detail', 'transactions.id', 'transaction_detail.transaction_id')
         ->join('products', 'transaction_detail.product_id', 'products.id')
-        ->where('type', 'distributor')
-        ->select('productName', 'SUM(transaction_detail.qty) as qty')
-        ->groupBy('products.id');
+        ->select('products.productName', 'transaction_detail.qty');
     }
 
     protected function fields()

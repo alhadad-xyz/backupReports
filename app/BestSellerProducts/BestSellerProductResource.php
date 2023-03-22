@@ -56,13 +56,15 @@ class BestSellerProductResource extends Resource
     }
 
     protected function query($query) {
-        $query->join('users', 'transactions.user_id', 'users.id')
+        $query
+        ->leftJoin('distributors', 'transactions.distributor_id', 'distributors.distributor_id')
+        ->leftJoin('outlets', 'transactions.outlet_id', 'outlets.outlet_id')
+        ->leftJoin('customers', 'transactions.customer_id', 'customers.customer_id')
         ->join('transaction_detail', 'transactions.id', 'transaction_detail.transaction_id')
         ->join('products', 'transaction_detail.product_id', 'products.id')
-        ->where('type', 'customer')
         ->select("transactions.id","invoice_date","invoice_no","SUM(discount) as discount","SUM(dpp) as dpp","SUM(ppn) as ppn","SUM(grand_total) as grand_total")
         ->select("SUM(transaction_detail.qty) as qty", "SUM(transaction_detail.price) as price")
-        ->select("users.name", "users.city")
+        ->select("COALESCE(distributors.distributor_name, outlets.outlet_name, customers.customer_name) AS name", "COALESCE(distributors.distributor_city, outlets.outlet_city, customers.customer_city) AS city")
         ->select("productName", "products.category", "products.unit")
         ->groupBy("products.id");
         return $query;

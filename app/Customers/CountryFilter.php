@@ -14,7 +14,7 @@ class CountryFilter extends SelectFilter
     protected function apply($query, $value)
     {
         //Return condition-applied query
-        return $query->where("country", $value);
+        return $query->where("customer_country", $value);
     }
 
     protected function options()
@@ -22,9 +22,8 @@ class CountryFilter extends SelectFilter
         //Since this is SelectFilter so you have options() method
         //to provide list of options for Select
         //In here we list all available country from customers table
-        return AutoMaker::table("users")
-            ->where('type', 'customer')
-            ->select("country")
+        return AutoMaker::table("customers")
+            ->select("customer_country")
             ->distinct();
     }
 }

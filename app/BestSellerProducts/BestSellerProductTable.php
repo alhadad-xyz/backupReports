@@ -35,12 +35,14 @@ class BestSellerProductTable extends Table
     protected function dataSource()
     {
         return AutoMaker::table("transactions")
-                ->join('users', 'transactions.user_id', 'users.id')
+                ->leftJoin('distributors', 'transactions.distributor_id', 'distributors.distributor_id')
+                ->leftJoin('outlets', 'transactions.outlet_id', 'outlets.outlet_id')
+                ->leftJoin('customers', 'transactions.customer_id', 'customers.customer_id')
                 ->join('transaction_detail', 'transactions.id', 'transaction_detail.transaction_id')
                 ->join('products', 'transaction_detail.product_id', 'products.id')
                 ->select("transactions.id","invoice_date","invoice_no","discount","dpp","ppn","grand_total")
                 ->select("transaction_detail.qty", "transaction_detail.price")
-                ->select("users.name", "users.city")
+                ->select("COALESCE(distributors.distributor_name, outlets.outlet_name, customers.customer_name) AS name", "COALESCE(distributors.distributor_city, outlets.outlet_city, customers.customer_city) AS city")
                 ->select("productName", "products.category", "products.unit");
 
     }
