@@ -1,10 +1,10 @@
 <?php
 namespace App\Orders;
 
-use \koolreport\dashboard\admin\filters\SelectFilter;
+use \koolreport\dashboard\admin\filters\Select2Filter;
 use App\AutoMaker;
 
-class DistributorFilter extends SelectFilter
+class DistributorFilter extends Select2Filter
 {
     protected function onCreated()
     {
@@ -14,12 +14,16 @@ class DistributorFilter extends SelectFilter
     protected function apply($query, $value)
     {
         //Return condition-applied query
-        return $query->where("distributor_name", $value);
+        if(isset($value)) {
+          return $query->where("distributor_name", $value);
+        } else {
+          return $query;
+        }
     }
 
     protected function options()
     {
-        //Since this is SelectFilter so you have options() method
+        //Since this is Select2Filter so you have options() method
         //to provide list of options for Select
         //In here we list all available country from customers table
         return AutoMaker::table("distributors")

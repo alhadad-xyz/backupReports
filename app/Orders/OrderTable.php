@@ -42,7 +42,7 @@ class OrderTable extends Table
             ->select("transactions.id","invoice_date","invoice_no","discount","dpp","ppn","grand_total")
             ->select("transaction_detail.qty", "transaction_detail.price")
             ->select("COALESCE(distributors.distributor_name, outlets.outlet_name, customers.customer_name) AS name", "COALESCE(distributors.distributor_city, outlets.outlet_city, customers.customer_city)")
-            ->select("productName", "products.category", "products.unit")
+            ->select("products.sku", "productName", "products.category", "products.unit")
             ->orderBy('invoice_date', 'DESC');
 
     }
@@ -60,6 +60,10 @@ class OrderTable extends Table
                 ->sortable(true),
             Text::create('invoice_no')
                 ->label("No Invoice")
+                ->searchable(true)
+                ->sortable(true),
+            Text::create('sku')
+                ->label("SKU")
                 ->searchable(true)
                 ->sortable(true),
             Text::create('productName')

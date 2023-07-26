@@ -33,7 +33,7 @@ class CustomerTable extends Table
     protected function dataSource()
     {
         return AutoMaker::table("customers")
-            ->leftJoin('outlets', 'outlets.outlet_id', 'outlets.outlet_id')
+            ->leftJoin('outlets', 'customers.outlet_id', 'outlets.outlet_id')
             ->select('customers.customer_id', 'customers.outlet_id', 'customers.customer_name', 'customers.customer_city', 'customers.customer_address', 'customers.customer_contact_no', 'customers.customer_email', 'customers.customer_taxable_company', 'customers.customer_npwp_address', 'customers.customer_npwp_no')
             ->select('outlet_name');
     }
@@ -41,33 +41,33 @@ class CustomerTable extends Table
     protected function fields()
     {
         return [
-            Text::create("name")
+            Text::create("customer_name")
                 ->label('Nama')
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("outlet")
+            Text::create("outlet_name")
                 ->label('Outlet')
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("city")
+            Text::create("customer_city")
                 ->label("Kota")
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("address")
+            Text::create("customer_address")
                 ->label("Alamat"),
-            Text::create("contact_no")
+            Text::create("customer_contact_no")
                 ->label("No Telp"),
-            Text::create("email")
+            Text::create("customer_email")
                 ->label("Email")
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("taxable_company")
+            Text::create("customer_taxable_company")
                 ->label("Nama Pengusaha Kena Pajak"),
-            Text::create("npwp_address")
+            Text::create("customer_npwp_address")
                 ->label("Alamat NPWP")
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("npwp_no")
+            Text::create("customer_npwp_no")
                 ->label("No NPWP")
                 ->searchable(true)
                 ->sortable(true),

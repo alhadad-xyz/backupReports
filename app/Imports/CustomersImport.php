@@ -2,40 +2,44 @@
 
 namespace App\Imports;
 
-use App\Models\OutletHasCustomer;
-use App\Models\User;
+use App\Models\Customer;
+use App\Models\Outlet;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Concerns\WithValidation;
 
-class CustomersImport implements ToCollection, WithHeadingRow
+class CustomersImport implements ToCollection, WithHeadingRow, WithValidation
 {
     public function collection(Collection $rows)
     {
         foreach ($rows as $row)
         {
             if(isset($row['email'])) {
-                $customer = User::firstOrCreate([
-                    'email' => $row['email'],
+                $outlet = Outlet::where('outlet_email', 'like', trim($row['outlet']))->first();
+                
+                $customer = Customer::firstOrCreate([
+                    'customer_email' => $row['email'],
                 ],[
-                    'name' => $row['name'],
-                    'country' => $row['country'],
-                    'city' => $row['city'],
-                    'address' => $row['address'],
-                    'contact_no' => $row['contact_no'],
-                    'taxable_company' => $row['taxable_company'],
-                    'npwp_address' => $row['npwp_address'],
-                    'npwp_no' => $row['npwp_no'],
-                    'type' => 'customer',
-                    'password' => Hash::make('12341234'),
+                    'outlet_id' => isset($outlet->outlet_id) ? $outlet->outlet_id : null,
+                    'customer_name' => $row['nama'],
+                    'customer_country' => $row['negara'],
+                    'customer_city' => $row['kota'],
+                    'customer_address' => $row['alamat'],
+                    'customer_contact_no' => strval($row['nomor_telp']),
+                    'customer_taxable_company' => $row['nama_pengusaha_kena_pajak'],
+                    'customer_npwp_address' => $row['alamat_npwp'],
+                    'customer_npwp_no' => strval($row['nomor_npwp']),
                 ]);
-
-                $outlet = User::where('email', $row['outlet'])->first();
-                if($outlet) {
-                    OutletHasCustomer::create(['outlet_id' => $outlet->id, 'customer_id' => $customer->id]);
-                }
             }
         }
+    }
+
+    public function rules(): array
+    {
+        return [
+            'email' => ['required'],
+            'nama' => ['required']
+        ];
     }
 }

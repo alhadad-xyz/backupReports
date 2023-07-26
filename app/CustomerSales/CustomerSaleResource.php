@@ -14,6 +14,7 @@ use \koolreport\dashboard\admin\actions\UpdateAction;
 use \koolreport\dashboard\fields\ID;
 use \koolreport\dashboard\fields\Text;
 use \koolreport\dashboard\fields\Currency;
+use \koolreport\dashboard\fields\Calculated;
 
 use \koolreport\dashboard\containers\Modal;
 use \koolreport\dashboard\containers\Inline;
@@ -32,6 +33,12 @@ use App\CustomerSales\CountryFilter;
 use App\CustomerSales\CustomerSaleTable;
 use App\CustomerSales\CustomerSaleChart;
 use App\CustomerSales\CustomerSaleLine;
+use App\Customers\CustomerDetailLineChart;
+use App\Customers\CustomerDetailLineChart2;
+use App\Customers\CustomerDetailTable;
+use App\Customers\CustomerDetailTable2;
+use App\Customers\CustomerDetailPieChart;
+use App\Customers\CustomerDetailPieChart2;
 
 class CustomerSaleResource extends Resource
 {
@@ -49,23 +56,65 @@ class CustomerSaleResource extends Resource
 
         $this->listScreen()->createButton()
             ->enabled(false);
+        
+        $this->listScreen()->actionBox()
+            ->enabled(false);
 
         $this->listScreen()->adminTable()
             ->tableStriped(true);
+
+        $this->detailScreen()->title(function(){
+            $data = $this->data();
+            return $data["customer_name"];
+        });
+
+        $this->detailScreen()->bottom(function($id){
+            //$id is the id value of record that shown by detail screen
+            $thirty_days_ago = date('Y-m-d', strtotime("-31 days"));
+            return  [
+                Row::create()->sub([
+                    Panel::create()->header("Sales Last 30 Days")->type("info")->sub([
+                        CustomerDetailLineChart::create()
+                        ->dataSource(
+                            AutoMaker::table("customers")
+                            ->leftJoin('transactions', 'transactions.customer_id', 'customers.customer_id')
+                            ->where('transactions.customer_id', $id)
+                            ->where('invoice_date', '>=', $thirty_days_ago)
+                            ->select("invoice_date", "COUNT('transactions.id') AS `Total Sales`")
+                            ->groupBy('invoice_date')
+                        ),
+                    ])
+                ]),
+
+                Row::create()->sub([
+                    Panel::create()->header("Sales Current Financial Year")->type("info")->sub([
+                        CustomerDetailLineChart2::create()
+                        ->dataSource(
+                            AutoMaker::table("customers")
+                            ->leftJoin('transactions', 'transactions.customer_id', 'customers.customer_id')
+                            ->where('transactions.customer_id', $id)
+                            ->select('MONTHNAME(invoice_date) as Month', 'COUNT(transactions.id) as `Total Sales`')
+                            ->groupBy('Month')
+                        ),
+                    ])
+                ]),
+            ];
+        });
     }
 
     protected function query($query) {
-        $query
-        ->leftJoin('transactions', 'transactions.customer_id', 'customers.customer_id')
-        ->select("transactions.id", "SUM(transactions.grand_total) as grand_total", "SUM(transactions.sale_return) as sale_return", "SUM(transactions.due_payment) as due_payment")
-        ->select("customer_name", 'customer_city', 'customer_address')
-        ->groupBy('transactions.customer_id');
-        return $query;
+      $query
+      ->leftJoin('transactions', 'transactions.customer_id', 'customers.customer_id')
+      ->select("transactions.id", "SUM(transactions.grand_total) as grand_total", "SUM(transactions.sale_return) as sale_return", "SUM(transactions.due_payment) as due_payment")
+      ->select('customers.customer_id', "customers.customer_name", 'customer_city', 'customer_address')
+      ->groupBy('transactions.customer_id');
+      return $query;
     }
 
     protected function filters()
     {
         return [
+            DateOrderFilter::create()->title("Tanggal"),
             CityFilter::create()->title("Kota"),
             CountryFilter::create()->title("Negara"),
         ];
@@ -81,7 +130,7 @@ class CustomerSaleResource extends Resource
     protected function actions()
     {
         return [
-            DetailAction::create()->showOnTable(false),
+            DetailAction::create()->showOnTable(true),
             UpdateAction::create()->showOnTable(false),
             InlineEditAction::create()->showOnTable(false),
             DeleteAction::create()->showOnTable(false),
@@ -92,8 +141,14 @@ class CustomerSaleResource extends Resource
     protected function fields()
     {
         return [
-            ID::create("#")
-                ->colName('id'),
+            Calculated::create("#", function($row) {
+                static $index = 0;
+                $index++;
+                return $index/2;
+            }),
+            ID::create("ID Customer")
+                ->colName('customer_id')
+                ->showOnIndex(false),
             Text::create("Nama")
                 ->colName('customer_name')
                 ->searchable(true)
@@ -128,7 +183,7 @@ class CustomerSaleResource extends Resource
                     ->xlsxExportable(true)
                     ->csvExportable(true)
             ])
-            ->width(1/2)
+            ->width(1)
             ->header("Chart Total Sales By Customers"),
 
             // Panel::success([
@@ -151,17 +206,17 @@ class CustomerSaleResource extends Resource
                         "PDF Export"=>MenuItem::create()->icon("far fa-file-pdf")
                             ->onClick(
                                 Client::showLoader().
-                                Client::widget("CustomerSaleTable")->exportToPDF()
+                                Client::widget("CustomerSaleTable")->exportToPDF("Report Customer Sales " . date('Y-m-d His'))
                             ),
                         "Excel Export"=>MenuItem::create()->icon("far fa-file-pdf")
                             ->onClick(
                                 Client::showLoader().
-                                Client::widget("CustomerSaleTable")->exportToXLSX()
+                                Client::widget("CustomerSaleTable")->exportToXLSX("Report Customer Sales " . date('Y-m-d His'))
                             ),
                         "CSV Export"=>MenuItem::create()->icon("far fa-file-pdf")
                             ->onClick(
                                 Client::showLoader().
-                                Client::widget("CustomerSaleTable")->exportToCSV()
+                                Client::widget("CustomerSaleTable")->exportToCSV("Report Customer Sales " . date('Y-m-d His'))
                             ),
                     ]),
                 ]),

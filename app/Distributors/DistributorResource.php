@@ -15,6 +15,7 @@ use \koolreport\dashboard\admin\relations\HasMany;
 
 use \koolreport\dashboard\fields\ID;
 use \koolreport\dashboard\fields\Text;
+use \koolreport\dashboard\fields\Calculated;
 
 use \koolreport\dashboard\containers\Modal;
 use \koolreport\dashboard\containers\Inline;
@@ -46,6 +47,9 @@ class DistributorResource extends Resource
 
         $this->listScreen()->createButton()
             ->enabled(false);
+        
+        $this->listScreen()->actionBox()
+          ->enabled(false);
 
         $this->listScreen()->adminTable()
             ->tableStriped(true);
@@ -186,8 +190,14 @@ class DistributorResource extends Resource
     protected function fields()
     {
         return [
-            ID::create("#")
-                ->colName('distributor_id'),
+            Calculated::create("#", function($row) {
+                static $index = 0;
+                $index++;
+                return $index/2;
+            }),
+            ID::create("ID Distributor")
+                ->colName('distributor_id')
+                ->showOnIndex(false),
             Text::create("Nama")
                 ->colName('distributor_name')
                 ->searchable(true)
@@ -240,17 +250,17 @@ class DistributorResource extends Resource
                         "PDF Export"=>MenuItem::create()->icon("far fa-file-pdf")
                             ->onClick(
                                 Client::showLoader().
-                                Client::widget("DistributorTable")->exportToPDF()
+                                Client::widget("DistributorTable")->exportToPDF("Report Distributors " . date('Y-m-d His'), ["orientation"=>"portrait"])
                             ),
                         "Excel Export"=>MenuItem::create()->icon("far fa-file-pdf")
                             ->onClick(
                                 Client::showLoader().
-                                Client::widget("DistributorTable")->exportToXLSX()
+                                Client::widget("DistributorTable")->exportToXLSX("Report Distributors " . date('Y-m-d His'))
                             ),
                         "CSV Export"=>MenuItem::create()->icon("far fa-file-pdf")
                             ->onClick(
                                 Client::showLoader().
-                                Client::widget("DistributorTable")->exportToCSV()
+                                Client::widget("DistributorTable")->exportToCSV("Report Distributors " . date('Y-m-d His'))
                             ),
                     ]),
 

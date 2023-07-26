@@ -16,6 +16,7 @@ use \koolreport\dashboard\fields\Currency;
 use \koolreport\dashboard\fields\Date;
 use \koolreport\dashboard\fields\Number;
 use \koolreport\dashboard\fields\Text;
+use \koolreport\dashboard\fields\Calculated;
 
 use \koolreport\dashboard\containers\Modal;
 use \koolreport\dashboard\containers\Inline;
@@ -49,6 +50,9 @@ class OrderResource extends Resource
 
         $this->listScreen()->createButton()
             ->enabled(false);
+        
+        $this->listScreen()->actionBox()
+          ->enabled(false);
 
         $this->listScreen()->adminTable()
             ->tableStriped(true);
@@ -64,15 +68,16 @@ class OrderResource extends Resource
         ->select("transactions.id","invoice_date","invoice_no","discount","dpp","ppn","grand_total")
         ->select("transaction_detail.qty", "transaction_detail.price")
         ->select("COALESCE(distributors.distributor_name, outlets.outlet_name, customers.customer_name) AS name", "COALESCE(distributors.distributor_city, outlets.outlet_city, customers.customer_city)")
-        ->select("productName", "products.category", "products.unit");
+        ->select("products.sku", "productName", "products.category", "products.unit");
         return $query;
     }
 
     protected function filters()
     {
         return [
-            OutletFilter::create()->title("Outlet"),
+            DateOrderFilter::create()->title("Tanggal Invoice"),
             DistributorFilter::create()->title("Distributor"),
+            OutletFilter::create()->title("Outlet"),
             CustomerFilter::create()->title("Customer"),
         ];
     }
@@ -83,7 +88,7 @@ class OrderResource extends Resource
             DetailAction::create()->showOnTable(false),
             UpdateAction::create()->showOnTable(false),
             InlineEditAction::create()->showOnTable(false),
-            DeleteAction::create()->showOnTable(false),
+            DeleteAction::create()->showOnTable(true),
         ];
     }
 
@@ -91,18 +96,28 @@ class OrderResource extends Resource
     protected function fields()
     {
         return [
-            ID::create("#")
-                ->colName('id'),
+            Calculated::create("#", function($row) {
+                static $index = 0;
+                $index++;
+                return $index/2;
+            }),
+            ID::create("ID Order")
+                ->colName('id')
+                ->showOnIndex(false),
             Date::create("Tanggal Invoice")
                 ->colName('invoice_date')
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("Nama Distributor")
+            Text::create("Nama Customer")
                 ->colName('name')
-                ->searchable(true)
+                ->searchable(false)
                 ->sortable(true),
             Text::create("No Invoice")
                 ->colName('invoice_no')
+                ->searchable(true)
+                ->sortable(true),
+            Text::create("SKU")
+                ->colName('sku')
                 ->searchable(true)
                 ->sortable(true),
             Text::create("Nama Produk")
@@ -150,17 +165,17 @@ class OrderResource extends Resource
                         "PDF Export"=>MenuItem::create()->icon("far fa-file-pdf")
                             ->onClick(
                                 Client::showLoader().
-                                Client::widget("OrderTable")->exportToPDF()
+                                Client::widget("OrderTable")->exportToPDF("Report Orders " . date('Y-m-d His'))
                             ),
                         "Excel Export"=>MenuItem::create()->icon("far fa-file-pdf")
                             ->onClick(
                                 Client::showLoader().
-                                Client::widget("OrderTable")->exportToXLSX()
+                                Client::widget("OrderTable")->exportToXLSX("Report Orders " . date('Y-m-d His'))
                             ),
                         "CSV Export"=>MenuItem::create()->icon("far fa-file-pdf")
                             ->onClick(
                                 Client::showLoader().
-                                Client::widget("OrderTable")->exportToCSV()
+                                Client::widget("OrderTable")->exportToCSV("Report Orders " . date('Y-m-d His'))
                             ),
                     ]),
 

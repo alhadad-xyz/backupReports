@@ -4,14 +4,19 @@
 
 @section('content')
     <div class="container mt-5">
-        <div class="card mx-auto" style="width: 32rem;">
+        <div class="card mx-auto" style="width: 80%;">
             <div class="card-body">
+                @if($errors->any())
+                    <div class="alert alert-danger" role="alert">
+                        {{ $errors->first() }}
+                    </div>
+                @endif
                 <form action="{{route('postDistributorImportFromExcel')}}" method="POST" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="formFile" class="form-label">Import Distributors</label>
                         <input class="form-control" type="file" name="import_file" id="import_file">
                     </div>
-                    <a href="uploads/files/import_distributor_excel_template.xlsx" class="btn btn-success" download>Download Template</a>
+                    <a href="uploads/files/[Template Distributor] import_distributor_excel_template.xlsx" class="btn btn-success" download>Download Template</a>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
             </div>

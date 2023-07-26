@@ -1,10 +1,10 @@
 <?php
 namespace App\Outlets;
 
-use \koolreport\dashboard\admin\filters\SelectFilter;
+use \koolreport\dashboard\admin\filters\Select2Filter;
 use App\AutoMaker;
 
-class CityFilter extends SelectFilter
+class CityFilter extends Select2Filter
 {
     protected function onCreated()
     {
@@ -13,13 +13,17 @@ class CityFilter extends SelectFilter
 
     protected function apply($query, $value)
     {
-        //Return condition-applied query
+      //Return condition-applied query
+      if(isset($value)) {
         return $query->where("outlet_city", $value);
+      } else {
+        return $query;
+      }
     }
 
     protected function options()
     {
-        //Since this is SelectFilter so you have options() method
+        //Since this is Select2Filter so you have options() method
         //to provide list of options for Select
         //In here we list all available country from outlets table
         return AutoMaker::table("outlets")

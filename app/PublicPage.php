@@ -15,6 +15,7 @@ use App\DistributorSales\DistributorSaleResource;
 use App\Orders\OrderReport;
 use App\Orders\OrderResource;
 use App\Outlets\OutletResource;
+use App\OutletSales\OutletSaleResource;
 use App\BestSellerProducts\BestSellerProductReport;
 use App\BestSellerProducts\BestSellerProductResource;
 use App\Home\HomeBoard;
@@ -40,8 +41,9 @@ use App\pdf\PDFBoard;
                 "Order History"=>OrderResource::create()->icon("fa fa-history"),
                 "Best Seller Products"=>BestSellerProductResource::create()->icon("fa fa-chart-line"),
                 "Sales Detail"=>Group::create()->icon("far fa-chart-bar")->sub([
-                    "Total Sales By Customers"=>CustomerSaleResource::create()->icon("fas fa-users"),
                     "Total Sales By Distributors"=>DistributorSaleResource::create()->icon("fa fa-truck"),
+                    "Total Sales By Outlets"=>OutletSaleResource::create()->icon("fas fa-shopping-cart"),
+                    "Total Sales By Customers"=>CustomerSaleResource::create()->icon("fas fa-users"),
                 ]),
             ]),
 

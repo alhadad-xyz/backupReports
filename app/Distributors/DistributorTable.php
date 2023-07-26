@@ -5,6 +5,7 @@ use \koolreport\dashboard\widgets\Table;
 use \koolreport\dashboard\fields\Text;
 use \koolreport\dashboard\fields\Currency;
 use \koolreport\dashboard\fields\DateTime;
+use \koolreport\dashboard\containers\Html;
 use App\AutoMaker;
 
 class DistributorTable extends Table
@@ -37,29 +38,29 @@ class DistributorTable extends Table
     protected function fields()
     {
         return [
-            Text::create("name")
+            Text::create("distributor_name")
                 ->label('Nama')
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("city")
+            Text::create("distributor_city")
                 ->label("Kota")
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("address")
+            Text::create("distributor_address")
                 ->label("Alamat"),
-            Text::create("contact_no")
+            Text::create("distributor_contact_no")
                 ->label("No Telp"),
-            Text::create("email")
+            Text::create("distributor_email")
                 ->label("Email")
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("taxable_company")
+            Text::create("distributor_taxable_company")
                 ->label("Nama Pengusaha Kena Pajak"),
-            Text::create("npwp_address")
+            Text::create("distributor_npwp_address")
                 ->label("Alamat NPWP")
                 ->searchable(true)
                 ->sortable(true),
-            Text::create("npwp_no")
+            Text::create("distributor_npwp_no")
                 ->label("No NPWP")
                 ->searchable(true)
                 ->sortable(true),

@@ -13,7 +13,7 @@ class CustomerSaleChart extends PieChart
 {
     protected function onInit()
     {
-        $this->title("Qty")
+        $this->title("Quantity")
             ->colorScheme(ColorList::random())
             ->height("240px");
     }

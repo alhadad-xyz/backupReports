@@ -16,6 +16,7 @@ use \koolreport\dashboard\admin\relations\HasMany;
 use \koolreport\dashboard\fields\ID;
 use \koolreport\dashboard\fields\RelationLink;
 use \koolreport\dashboard\fields\Text;
+use \koolreport\dashboard\fields\Calculated;
 
 use \koolreport\dashboard\containers\Modal;
 use \koolreport\dashboard\containers\Inline;
@@ -48,6 +49,9 @@ class CustomerResource extends Resource
             ->type("primary");
 
         $this->listScreen()->createButton()
+            ->enabled(false);
+        
+        $this->listScreen()->actionBox()
             ->enabled(false);
 
         $this->listScreen()->adminTable()
@@ -122,8 +126,14 @@ class CustomerResource extends Resource
     protected function fields()
     {
         return [
-            ID::create("#")
-                ->colName('customer_id'),
+            Calculated::create("#", function($row) {
+                static $index = 0;
+                $index++;
+                return $index/2;
+            }),
+            ID::create("ID Customer")
+                ->colName('customer_id')
+                ->showOnIndex(false),
             Text::create("Nama")
                 ->colName('customer_name')
                 ->searchable(true)
@@ -195,17 +205,17 @@ class CustomerResource extends Resource
                         "PDF Export"=>MenuItem::create()->icon("far fa-file-pdf")
                             ->onClick(
                                 Client::showLoader().
-                                Client::widget("CustomerTable")->exportToPDF()
+                                Client::widget("CustomerTable")->exportToPDF("Report Customers " . date('Y-m-d His'))
                             ),
                         "Excel Export"=>MenuItem::create()->icon("far fa-file-pdf")
                             ->onClick(
                                 Client::showLoader().
-                                Client::widget("CustomerTable")->exportToXLSX()
+                                Client::widget("CustomerTable")->exportToXLSX("Report Customers " . date('Y-m-d His'))
                             ),
                         "CSV Export"=>MenuItem::create()->icon("far fa-file-pdf")
                             ->onClick(
                                 Client::showLoader().
-                                Client::widget("CustomerTable")->exportToCSV()
+                                Client::widget("CustomerTable")->exportToCSV("Report Customers " . date('Y-m-d His'))
                             ),
                     ]),
 

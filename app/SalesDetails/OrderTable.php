@@ -67,6 +67,10 @@ class OrderTable extends Table
                 ->colName('invoice_no')
                 ->searchable(true)
                 ->sortable(true),
+            Text::create('SKU')
+                ->colName("sku")
+                ->searchable(true)
+                ->sortable(true),
             Text::create("Nama Produk")
                 ->colName('product_name')
                 ->searchable(true)

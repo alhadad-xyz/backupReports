@@ -4,14 +4,19 @@
 
 @section('content')
     <div class="container mt-5">
-        <div class="card mx-auto" style="width: 32rem;">
+        <div class="card mx-auto" style="width: 80&;">
             <div class="card-body">
+                @if($errors->any())
+                    <div class="alert alert-danger" role="alert">
+                        {{ $errors->first() }}
+                    </div>
+                @endif
                 <form action="{{route('postOutletImportFromExcel')}}" method="POST" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="formFile" class="form-label">Import Outlets</label>
                         <input class="form-control" type="file" name="import_file" id="import_file">
                     </div>
-                    <a href="uploads/files/import_outlet_excel_template.xlsx" class="btn btn-success" download>Download Template</a>
+                    <a href="uploads/files/[Template Outlet] import_outlet_excel_template.xlsx" class="btn btn-success" download>Download Template</a>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
             </div>
@@ -74,7 +79,7 @@
                         <tr>
                           <td>10</td>
                           <td>Distributor</td>
-                          <td>Distributor Email / Contact No (Optional)</td>
+                          <td>Distributor Email (Optional)</td>
                         </tr>
                     </tbody>
                   </table>

@@ -162,6 +162,16 @@ class App extends Application
                 )
                 ->pdfEngine(
                     ChromeHeadlessio::create()->token("e6b3bbd783b447ec706a399d3c63761958ecd4cfac730cb10c0265a54b6296e0")
+                    ->defaultConfig([
+                      "scale"=>0.5,
+                      "format"=>"A4",
+                      "margin"=>[
+                        "top"=>"1in",
+                        "bottom"=>"1in",
+                        "left"=>"1in",
+                        "right"=>"1in",
+                      ],
+                    ])
                 );
                 // ->pdfEngine(
                 //     LocalExport::create()

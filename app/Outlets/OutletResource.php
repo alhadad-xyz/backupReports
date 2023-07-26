@@ -16,6 +16,7 @@ use \koolreport\dashboard\admin\relations\HasMany;
 use \koolreport\dashboard\fields\ID;
 use \koolreport\dashboard\fields\RelationLink;
 use \koolreport\dashboard\fields\Text;
+use \koolreport\dashboard\fields\Calculated;
 
 use \koolreport\dashboard\containers\Modal;
 use \koolreport\dashboard\containers\Inline;
@@ -48,6 +49,9 @@ class OutletResource extends Resource
             ->type("primary");
 
         $this->listScreen()->createButton()
+            ->enabled(false);
+        
+        $this->listScreen()->actionBox()
             ->enabled(false);
 
         $this->listScreen()->adminTable()
@@ -193,8 +197,14 @@ class OutletResource extends Resource
     protected function fields()
     {
         return [
-            ID::create("#")
-                ->colName('outlet_id'),
+            Calculated::create("#", function($row) {
+                static $index = 0;
+                $index++;
+                return $index/2;
+            }),
+            ID::create("ID Outlet")
+                ->colName('outlet_id')
+                ->showOnIndex(false),
             Text::create("Nama")
                 ->colName('outlet_name')
                 ->searchable(true)
@@ -266,17 +276,17 @@ class OutletResource extends Resource
                         "PDF Export"=>MenuItem::create()->icon("far fa-file-pdf")
                             ->onClick(
                                 Client::showLoader().
-                                Client::widget("OutletTable")->exportToPDF()
+                                Client::widget("OutletTable")->exportToPDF("Report Outlets " . date('Y-m-d His'))
                             ),
                         "Excel Export"=>MenuItem::create()->icon("far fa-file-pdf")
                             ->onClick(
                                 Client::showLoader().
-                                Client::widget("OutletTable")->exportToXLSX()
+                                Client::widget("OutletTable")->exportToXLSX("Report Outlets " . date('Y-m-d His'))
                             ),
                         "CSV Export"=>MenuItem::create()->icon("far fa-file-pdf")
                             ->onClick(
                                 Client::showLoader().
-                                Client::widget("OutletTable")->exportToCSV()
+                                Client::widget("OutletTable")->exportToCSV("Report Outlets " . date('Y-m-d His'))
                             ),
                     ]),
 

@@ -51,7 +51,7 @@ class OrderResource extends Resource
         ->select("transactions.id","invoice_date","invoice_no","discount","dpp","ppn","grand_total")
         ->select("transaction_detail.qty", "transaction_detail.price")
         ->select("users.name", "users.city")
-        ->select("productName", "products.category", "products.unit");
+        ->select("products.sku", "productName", "products.category", "products.unit");
         return $query;
     }
 
@@ -107,6 +107,10 @@ class OrderResource extends Resource
                 ->sortable(true),
             Text::create("No Invoice")
                 ->colName('invoice_no')
+                ->searchable(true)
+                ->sortable(true),
+            Text::create("SKU")
+                ->colName('sku')
                 ->searchable(true)
                 ->sortable(true),
             Text::create("Nama Produk")

@@ -30,18 +30,21 @@ class MyDashboardController extends Controller
 
     public function postCustomerImportFromExcel(Request $request) {
         try {
+            $request->validate([
+              'import_file' => 'required|mimes:xlsx,xlx,xls'
+            ],[
+              'import_file.required' => 'File is required!'
+            ]);
+
             Excel::import(new CustomersImport, $request->file('import_file'));
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
 
             foreach ($failures as $failure) {
-                $failure->row(); // row that went wrong
-                $failure->attribute(); // either heading key (if using heading row concern) or column index
-                $failure->errors(); // Actual error messages from Laravel validator
-                $failure->values(); // The values of the row that has failed.
+                return redirect()->back()->withErrors(['msg' => $failure->errors()[0] . ' at row ' . $failure->row()]);
             }
        }
-       return redirect('/');
+       return redirect()->to('https://hessen.eyesimple.us/?kdr=eyJyb3V0ZSI6IkFwcC9QdWJsaWNQYWdlL0N1c3RvbWVyUmVzb3VyY2UiLCJhY3Rpb24iOiJpbmRleCIsInBhcmFtcyI6bnVsbH0=');
     }
 
     public function distributorImportFromExcel() {
@@ -50,15 +53,18 @@ class MyDashboardController extends Controller
 
     public function postDistributorImportFromExcel(Request $request) {
         try {
+            $request->validate([
+              'import_file' => 'required|mimes:xlsx,xlx,xls'
+            ],[
+              'import_file.required' => 'File is required!'
+            ]);
+
             Excel::import(new DistributorsImport, $request->file('import_file'));
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
 
             foreach ($failures as $failure) {
-                $failure->row(); // row that went wrong
-                $failure->attribute(); // either heading key (if using heading row concern) or column index
-                $failure->errors(); // Actual error messages from Laravel validator
-                $failure->values(); // The values of the row that has failed.
+                return redirect()->back()->withErrors(['msg' => $failure->errors()[0] . ' at row ' . $failure->row()]);
             }
         }
         return redirect('/');
@@ -70,18 +76,22 @@ class MyDashboardController extends Controller
 
     public function postOutletImportFromExcel(Request $request) {
         try {
-            Excel::import(new OutletsImport, $request->file('import_file'));
+          $request->validate([
+            'import_file' => 'required|mimes:xlsx,xlx,xls'
+          ],[
+            'import_file.required' => 'File is required!'
+          ]);
+
+          Excel::import(new OutletsImport, $request->file('import_file'));
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
 
             foreach ($failures as $failure) {
-                $failure->row(); // row that went wrong
-                $failure->attribute(); // either heading key (if using heading row concern) or column index
-                $failure->errors(); // Actual error messages from Laravel validator
-                $failure->values(); // The values of the row that has failed.
+                return redirect()->back()->withErrors(['msg' => $failure->errors()[0] . ' at row ' . $failure->row()]);
             }
         }
-        return redirect('/');
+
+       return redirect()->to('https://hessen.eyesimple.us/?kdr=eyJyb3V0ZSI6IkFwcC9QdWJsaWNQYWdlL091dGxldFJlc291cmNlIiwiYWN0aW9uIjoiaW5kZXgiLCJwYXJhbXMiOm51bGx9');
     }
 
     public function orderImportFromExcel() {
@@ -90,17 +100,21 @@ class MyDashboardController extends Controller
 
     public function postOrderImportFromExcel(Request $request) {
         try {
-            Excel::import(new OrdersImport, $request->file('import_file'));
+          $request->validate([
+            'import_file' => 'required|mimes:xlsx,xlx,xls'
+          ],[
+            'import_file.required' => 'File is required!'
+          ]);
+
+          Excel::import(new OrdersImport, $request->file('import_file'));
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
 
             foreach ($failures as $failure) {
-                $failure->row(); // row that went wrong
-                $failure->attribute(); // either heading key (if using heading row concern) or column index
-                $failure->errors(); // Actual error messages from Laravel validator
-                $failure->values(); // The values of the row that has failed.
+                return redirect()->back()->withErrors(['msg' => $failure->errors()[0] . ' at row ' . $failure->row()]);
             }
         }
-        return redirect('/');
+
+       return redirect()->to('https://hessen.eyesimple.us/?kdr=eyJyb3V0ZSI6IkFwcC9QdWJsaWNQYWdlL09yZGVyUmVzb3VyY2UiLCJhY3Rpb24iOiJpbmRleCIsInBhcmFtcyI6bnVsbH0=');
     }
 }
